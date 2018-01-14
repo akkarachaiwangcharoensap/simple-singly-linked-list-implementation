@@ -2,7 +2,7 @@
 A simple implementation of singly linked list using javascript
 
 The demonstration can be viewed on Youtube
-[Aki Wiki | Singly Linked List Implementation](https://www.youtube.com/watch?v=KagPVTuC1ec)
+[Aki Wiki | Singly Linked List Implementation](https://www.youtube.com/watch?v=hKqWXOhN0NI)
 
 Resource(s):
 
