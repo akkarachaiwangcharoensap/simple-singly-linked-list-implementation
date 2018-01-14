@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Linked List (Singly)</title>
+
+	<!-- Jquery -->
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" type="text/css" href="frameworks/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container" id="container">
+		<h1>Linked List (Singly)</h1>
+		<div class="row" id="items"></div>
+	</div>
+	
+	<div class="controller">
+		<button id="reset">Re Render</button>
+	</div>
+	<style type="text/css">
+
+		#container {
+			position: relative;
+		}
+
+		.item:nth-child(even) #current-data {
+			color: red;
+		}
+
+		.item:nth-child(odd) #current-data {
+			color: blue;
+		}
+
+		.item:nth-child(even) #next-data {
+			color: blue;
+		}
+
+		.item:nth-child(odd) #next-data {
+			color: red;
+		}
+
+		.item {
+			height: 400px;
+		}
+
+		.line-link {
+			width: 24px;
+			height: 224px;
+
+			margin: 18px auto;
+
+			display: block;
+			background: black;
+
+			position: relative;
+		}
+
+		.arrow-down {
+		  left: -28px;
+		  top: 224px;
+
+		  width: 0; 
+		  height: 0; 
+		  border-left: 40px solid transparent;
+		  border-right: 40px solid transparent;
+		  
+		  border-top: 40px solid black;
+
+		  position: absolute;
+		}
+
+		.controller {
+			top: 0;
+			right: 0;
+			padding: 36px;
+
+			position: fixed;
+		}
+
+		.controller #reset {
+			background: #b70000;
+			color: white;
+			border: 2px solid black;
+			padding: 12px;
+		}
+	</style>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var singlyLinkedList = {
+				head: null,
+
+				/**
+				 * Add a node onto the linked list
+				 * in the first slot (head)
+				 *
+				 * @param Object node
+				 * @return void
+				 */
+				addFirst: function (node, callback = null) {
+					if (this.head == null) {
+						this.head = node;
+					} else {
+						var temp = new Object(this.head);
+						
+						this.head = node;
+						this.head.next = temp;
+					}
+
+					if (callback != null) {
+						callback();
+					}
+				},
+
+				/**
+				 * Add a node onto the linked list
+				 * in the last slot
+				 *
+				 * @param Object node
+				 * @param Function callback (optional)
+				 *
+				 * @return void
+				 */
+				addLast: function (node, callback = null) {
+					if (this.head == null) {
+						this.head = new Object(node);
+					} else {
+
+						var current = new Object(this.head);
+
+						while (current != null && current.next != null) {
+							current = current.next;
+						}
+
+						var last = current;	
+						if (last != null) {
+							last.next = node;
+						}
+					}
+
+					if (callback != null) {
+						callback();
+					}
+				},
+
+				/**
+				 * Add a node onto the linked list
+				 * before a given node
+				 *
+				 * @param Object key
+				 * @param Object node
+				 * @param Function callback (optional)
+				 *
+				 * @return void
+				 */
+				addBefore: function (key, node, callback = null) {
+					if (this.head == null) {
+						return;
+					}
+
+					// Check if it is adding before the head
+					if (this.head.data == key.data) {
+						node.next = this.head;
+						this.head = node;
+
+						return;
+					}
+
+					// Check if the data is found on the list or not
+					var current = new Object(this.head);
+					while (current != null && current.data != key.data) {
+						current = current.next;
+					}
+
+					if (current != null) {
+						var temp = new Object(this.head);
+						var previous = null;
+
+						// Getting the previous slot
+						while (temp != null && temp != current) {
+							previous = temp;
+							temp = temp.next;
+						}
+
+						node.next = previous.next;
+						previous.next = node;
+
+					} else {
+						throw "Sorry, but no key is found...";
+					}
+
+					if (callback != null) {
+						callback();
+					}
+				},
+
+				/**
+				 * Add a node onto the linked list
+				 * after a given key
+				 *
+				 * @param Object key
+				 * @param Object node
+				 * @param Function callback (optional)
+				 *
+				 * @return void
+				 */
+				addAfter: function (key, node, callback = null) {
+					if (this.head == null) {
+						return;
+					}
+
+					// Check if it is adding after the head
+					if (this.head.data == key.data) {
+						node.next = this.head.next;
+						this.head.next = node;
+
+						return;
+					}
+
+					// Check if the data is found on the list or not
+					var current = new Object(this.head);
+					while (current != null && current.data != key.data) {
+						current = current.next;
+					}
+
+					node.next = current.next;
+					current.next = node;
+
+					if (callback != null) {
+						callback();
+					}
+				},
+
+				/**
+				 * Remove a node from the linked list
+				 * by the given node
+				 *
+				 * @param Object node
+				 * @param Function callback (optional)
+				 *
+				 * @return void
+				 */
+				remove: function (node, callback = null) {
+					if (this.head == null) {
+						throw "Cannot remove any node, since it is empty.";
+					}
+
+					if (this.head.data == node.data) {
+						this.head = this.head.next;
+						return;
+					}
+
+					var current = new Object(this.head);
+					while (current != null && current.data != node.data) {
+						current = current.next;
+					}
+
+					if (current != null) {
+						var temp = new Object(this.head);
+						var previous = null;
+						while (temp != null && temp.data != current.data) {
+							previous = temp;
+							temp = temp.next;
+						}
+
+						previous.next = current.next;
+					} else {
+						throw "No node is found.";
+					}
+
+					if (callback != null) {
+						callback();
+					}
+				},
+
+				traverse: function () {
+					var current = new Object(this.head);
+
+					while (current != null) {
+						console.log(current);
+						current = current.next;
+					}
+				}
+			};
+
+			var renderer = {
+				head: null,
+				template: function (node) {
+
+					if (node.next != null) {
+						return '<div class="col-lg-12 col-md-12 col-sm-12 item">'
+								+ '<h1 id="current-data">' + 'Data: ' + node.data + '</h1>'
+								+ '<h1 id="next-data">' + 'Next: ' + node.next.data + '</h1>'
+								+ '<div class="line-link">'
+									+ '<div class="arrow-down"></div>'
+								+ '</div>'
+							+ '</div>';
+					} else {
+						return '<div class="col-lg-12 col-md-12 col-sm-12 item">'
+								+ '<h1 id="current-data">' + 'Data: ' + node.data + '</h1>'
+								+ '<h1 id="next-data">' + 'Next: ' + ' Null' + '</h1>'
+								+ '<div class="line-link">'
+									+ '<div class="arrow-down"></div>'
+								+ '</div>'
+							+ '</div>';
+					}
+				},
+				render: function () {
+					if (this.head == null) {
+						return;
+					}
+					var $target = $('#items');
+					$target.empty();
+
+					var current = new Object(this.head);
+					while (current != null) {
+
+						var item = this.template(current);
+
+						$target.append(item);
+
+						current = current.next;
+					}
+
+				},
+				debug: function () {
+					var current = new Object(this.head);
+
+					while (current != null) {
+						console.log(current);
+						current = current.next;
+					}
+				}
+			}
+
+			var firstNode = {
+				data: "My First Node",
+				next: null
+			};
+
+			var secondNode = {
+				data: "My Second Node",
+				next: null
+			};
+
+			var thirdNode = {
+				data: "My Third Node",
+				next: null
+			};
+
+			var fourthNode = {
+				data: "My Fourth Node",
+				next: null
+			};
+
+			singlyLinkedList.addFirst(firstNode);
+			singlyLinkedList.addLast(secondNode);
+			singlyLinkedList.addBefore(secondNode, thirdNode);
+			singlyLinkedList.addAfter(firstNode, fourthNode);
+			// singlyLinkedList.remove(firstNode);
+
+			renderer.head = singlyLinkedList.head;
+			renderer.debug();
+			renderer.render();
+
+			$('#reset').click(function () {
+				renderer.head = singlyLinkedList.head;
+				renderer.render();
+			});
+
+			window.linkedList = singlyLinkedList;
+			console.log(window.linkedList)
+		});
+	</script>
+</body>
+</html>
